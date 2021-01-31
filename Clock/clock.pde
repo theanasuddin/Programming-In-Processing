@@ -124,7 +124,7 @@ void draw() {
   rect(1452, 49, 518, 159);
 
   textAlign(LEFT, TOP);
-  drawText(Finance, 80, color(255), getHour() + ":" + currentMinute + ":" + currentSecond, 1482, 74);
+  drawText(Finance, 80, color(255), nf(getHour(), 2) + ":" + nf(currentMinute, 2) + ":" + nf(currentSecond, 2), 1482, 74);
   drawText(Finance, 40, color(160, 160, 160), getPeriods(), 1747, 105);
   drawText(Finance, 30, color(152, 197, 232), getDayName(calendar.get(Calendar.DAY_OF_WEEK)) + ", " + getMonthName(month()) + " " + day() + ", " + year(), 1482, 159);
 }
