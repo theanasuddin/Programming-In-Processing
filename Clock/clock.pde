@@ -7,6 +7,8 @@ import java.util.Calendar;
 
 PImage background;
 PImage icon;
+PImage audio;
+PImage noAudio;
 
 float halfWidth;
 float halfHeight;
@@ -59,21 +61,28 @@ float distHandX;
 float distHandY;
 
 SoundFile tickSound;
+SoundFile audioToggle;
 
 PFont Finance;
 
 Calendar calendar;
 
+boolean audioState = true;
+boolean audioButtonHover;
+
 void setup() {
   size(1920, 1080);
-  frameRate(1);
+  frameRate(60);
   background = loadImage("bg.jpg");
   tickSound = new SoundFile(this, "tick.wav");
+  audioToggle = new SoundFile(this, "sound_on.mp3");
   Finance = createFont("Finance.ttf", 32);
   calendar = Calendar.getInstance();
   surface.setTitle("Clock");
   icon = loadImage("icon.png");
   surface.setIcon(icon);
+  audio = loadImage("audio.png");
+  noAudio = loadImage("no_audio.png");
 
   halfWidth = width / 2;
   halfHeight = height / 2;
@@ -122,6 +131,17 @@ void draw() {
   setStroke(strokeWeightHalf, digitalClockRectBorder);
   fill(digitalClockRectFill);
   rect(1452, 49, 518, 159);
+  
+  // check cursor position
+  checkCursor();
+
+  // audio button
+  drawAudioButton(audioState);
+
+  // play tick
+  if (frameCount % 60 == 30) {
+    playTick();
+  }
 
   textAlign(LEFT, TOP);
   drawText(Finance, 80, color(255), nf(getHour(), 2) + ":" + nf(currentMinute, 2) + ":" + nf(currentSecond, 2), 1482, 74);
@@ -190,7 +210,11 @@ void drawHand(int currentTime, float delta, float handLength) {
 }
 
 void playTick() {
-  tickSound.play();
+  if (audioState) {
+    tickSound.play();
+  } else if (!audioState) {
+    tickSound.stop();
+  }
 }
 
 void drawText(PFont fontName, int textSize, color textFill, String text, float posX, float posY) {
@@ -225,5 +249,41 @@ int getHour() {
     return 12;
   } else {
     return hour() % 12;
+  }
+}
+
+void drawAudioButton(boolean audioState) {
+  setStroke(strokeWeightHalf, digitalClockRectBorder);
+  noFill();
+  rect(1870, 49, 60, 50);
+  if (audioState) {
+    image(audio, 1880, 59, 30, 30);
+  } else if (!audioState) {
+    image(noAudio, 1880, 59, 30, 30);
+  }
+}
+
+void checkCursor() {
+  if (mouseX >= 1880 && mouseX <= 1910 && mouseY >= 59 && mouseY <= 89) {
+    audioButtonHover = true;
+    cursor(HAND);
+  } else {
+    audioButtonHover = false;
+    cursor(ARROW);
+  }
+}
+
+void toggleAudio() {
+  if (audioState) {
+    audioState = false;
+  } else if (!audioState) {
+    audioToggle.play();
+    audioState = true;
+  }
+}
+
+void mousePressed() {
+  if (audioButtonHover) {
+    toggleAudio();
   }
 }
