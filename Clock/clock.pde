@@ -120,7 +120,6 @@ void draw() {
 
   // second hand
   setStroke(strokeWeightOne, clockStroke);
-  playTick();
   drawHand(currentSecond, secondHandDelta, secondHandLength);
 
   // pin
